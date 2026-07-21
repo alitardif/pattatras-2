@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pattatras — 1 à {{ end }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/styles.css">
+{% endblock %}
+
+{% block body %}
+<header class="hero">
+    <div class="hero__inner">
+        <p class="hero__brand">Pattatras</p>
+        <p class="hero__subtitle"><strong>Saisissez un nombre entre {{ start }} et {{ end }}</strong></p>
+        <p class="hero__subtitle">
+            Si c'est un multiple de 3 → <strong>Patte</strong> s'affichera<br>
+            Si c'est un multiple de 5 → <strong>Tatras</strong> s'affichera<br>
+            Si c'est multiple de 3 et 5 → <strong>Pattatras</strong> s'affichera
+        </p>
+    </div>
+</header>
+
+<main class="layout">
+    <section class="filter" aria-label="Filtrer un nombre">
+        {{ form_start(form, { attr: { class: 'filter__form', novalidate: 'novalidate' } }) }}
+            <div class="filter__field">
+                {{ form_label(form.number) }}
+                {{ form_widget(form.number, { attr: { class: 'filter__input' ~ (form.number.vars.errors|length ? ' filter__input--error' : '') } }) }}
+                <div class="filter__errors" role="alert">
+                    {{ form_errors(form.number) }}
+                </div>
+            </div>
+            <div class="filter__actions">
+                <button type="submit" class="filter__button filter__button--primary">Afficher</button>
+                <a href="{{ path('pattatras_index') }}" class="filter__button filter__button--secondary">Réinitialiser</a>
+            </div>
+        {{ form_end(form) }}
+    </section>
+
+    <section class="results" aria-label="Résultats">
+        <h2 class="results__title">
+            {% if filtered %}
+                Résultat pour {{ results[0].number }}
+            {% else %}
+                Résultats
+            {% endif %}
+        </h2>
+        <ol class="results__list{% if filtered %} results__list--filtered{% endif %}">
+            {% for result in results %}
+                <li class="results__item results__item--{{ result.type }}">
+                    <span class="results__number">{{ result.number }}</span>
+                    <span class="results__value">{{ result.value }}</span>
+                </li>
+            {% endfor %}
+        </ol>
+    </section>
+</main>
+{% endblock %}
