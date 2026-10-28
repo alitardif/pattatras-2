@@ -21,6 +21,9 @@ final class PattatrasCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Affiche un résultat par ligne, puis un bilan du parcours.
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

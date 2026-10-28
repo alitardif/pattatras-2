@@ -11,6 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PattatrasController extends AbstractController
 {
+    /**
+     * Transmet les résultats à la page Twig.
+     * Sans filtre valide, conserve la liste complète et les éventuelles erreurs du formulaire.
+     */
     #[Route('/', name: 'pattatras_index', methods: ['GET'])]
     public function index(Request $request, PattatrasService $pattatrasService): Response
     {

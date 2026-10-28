@@ -17,12 +17,20 @@ final class PattatrasServiceTest extends TestCase
         $this->service = new PattatrasService();
     }
 
+    /**
+     * Vérifie la transformation pour chaque couple nombre/résultat fourni par transformProvider.
+     */
     #[DataProvider('transformProvider')]
     public function testTransform(int $number, string $expected): void
     {
         self::assertSame($expected, $this->service->transform($number));
     }
 
+    /**
+     * Fournit les cas métier et des valeurs proches de la borne supérieure.
+     *
+     * @return iterable<string, array{int, string}>
+     */
     public static function transformProvider(): iterable
     {
         yield 'nombre simple' => [1, '1'];
@@ -35,6 +43,9 @@ final class PattatrasServiceTest extends TestCase
         yield '6455 multiple de 5' => [6455, 'Tatras'];
     }
 
+    /**
+     * Vérifie la taille de la plage par défaut, ses extrémités et un résultat de remplacement.
+     */
     public function testGenerateDefaultRange(): void
     {
         $results = $this->service->generate();
@@ -47,6 +58,9 @@ final class PattatrasServiceTest extends TestCase
         self::assertSame('Pattatras', $results[14]['value']);
     }
 
+    /**
+     * Vérifie les quatre catégories utilisées par la page pour distinguer les résultats.
+     */
     public function testGenerateIncludesSemanticTypes(): void
     {
         $results = $this->service->generate(2, 15);
@@ -57,10 +71,13 @@ final class PattatrasServiceTest extends TestCase
         self::assertSame('pattatras', $results[13]['type']);
     }
 
+    /**
+     * Vérifie qu'une plage inversée est refusée avec l'exception et le message attendus.
+     */
     public function testGenerateRejectsReversedRange(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('La borne de début doit être inférieure ou égale à la borne de fin.');
+        $this->expectExceptionMessageIs('La borne de début doit être inférieure ou égale à la borne de fin.');
 
         $this->service->generate(2, 1);
     }
