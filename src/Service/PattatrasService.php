@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 final class PattatrasService
@@ -7,24 +9,15 @@ final class PattatrasService
     public const DEFAULT_START = 1;
     public const DEFAULT_END = 6457;
 
+    private const REPLACEMENTS = [
+        'pattatras' => 'Pattatras',
+        'patte' => 'Patte',
+        'tatras' => 'Tatras',
+    ];
+
     public function transform(int $number): string
     {
-        $multipleOfThree = $number % 3 === 0;
-        $multipleOfFive = $number % 5 === 0;
-
-        if ($multipleOfThree && $multipleOfFive) {
-            return 'Pattatras';
-        }
-
-        if ($multipleOfThree) {
-            return 'Patte';
-        }
-
-        if ($multipleOfFive) {
-            return 'Tatras';
-        }
-
-        return (string) $number;
+        return $this->resolveValue($number, $this->resolveType($number));
     }
 
     /**
@@ -39,24 +32,29 @@ final class PattatrasService
         $results = [];
 
         for ($number = $start; $number <= $end; ++$number) {
-            $value = $this->transform($number);
+            $type = $this->resolveType($number);
             $results[] = [
                 'number' => $number,
-                'value' => $value,
-                'type' => $this->resolveType($value),
+                'value' => $this->resolveValue($number, $type),
+                'type' => $type,
             ];
         }
 
         return $results;
     }
 
-    private function resolveType(string $value): string
+    private function resolveType(int $number): string
     {
-        return match ($value) {
-            'Pattatras' => 'pattatras',
-            'Patte' => 'patte',
-            'Tatras' => 'tatras',
+        return match (true) {
+            $number % 15 === 0 => 'pattatras',
+            $number % 3 === 0 => 'patte',
+            $number % 5 === 0 => 'tatras',
             default => 'number',
         };
+    }
+
+    private function resolveValue(int $number, string $type): string
+    {
+        return self::REPLACEMENTS[$type] ?? (string) $number;
     }
 }

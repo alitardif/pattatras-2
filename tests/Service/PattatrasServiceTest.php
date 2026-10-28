@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Service\PattatrasService;
@@ -43,5 +45,23 @@ final class PattatrasServiceTest extends TestCase
         self::assertSame(6457, $results[6456]['number']);
         self::assertSame('6457', $results[6456]['value']);
         self::assertSame('Pattatras', $results[14]['value']);
+    }
+
+    public function testGenerateIncludesSemanticTypes(): void
+    {
+        $results = $this->service->generate(2, 15);
+
+        self::assertSame('number', $results[0]['type']);
+        self::assertSame('patte', $results[1]['type']);
+        self::assertSame('tatras', $results[3]['type']);
+        self::assertSame('pattatras', $results[13]['type']);
+    }
+
+    public function testGenerateRejectsReversedRange(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('La borne de début doit être inférieure ou égale à la borne de fin.');
+
+        $this->service->generate(2, 1);
     }
 }
