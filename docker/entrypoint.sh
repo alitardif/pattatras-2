@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -eu
 
 cd /var/www/html
 
@@ -12,8 +12,8 @@ chown -R www-data:www-data var
 chmod -R 775 var
 
 if [ "${APP_ENV:-prod}" = "prod" ]; then
-    php bin/console cache:clear --env=prod --no-warmup || true
-    php bin/console cache:warmup --env=prod || true
+    php bin/console cache:clear --env=prod --no-warmup
+    php bin/console cache:warmup --env=prod
     chown -R www-data:www-data var
 fi
 
