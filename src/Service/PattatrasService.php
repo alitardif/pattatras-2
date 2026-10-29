@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Enum\ResultType;
+
 final class PattatrasService
 {
     public const DEFAULT_START = 1;
     public const DEFAULT_END = 6457;
-
-    private const WORDS = [
-        'pattatras' => 'Pattatras',
-        'patte' => 'Patte',
-        'tatras' => 'Tatras',
-    ];
 
     /**
      * Renvoie le mot associé au nombre, ou le nombre sous forme de texte.
      */
     public function transform(int $number): string
     {
-        return $this->resolveValue($number, $this->resolveType($number));
+        return $this->resolveType($number)->getValue($number);
     }
 
     /**
@@ -42,8 +38,8 @@ final class PattatrasService
             $type = $this->resolveType($number);
             $results[] = [
                 'number' => $number,
-                'value' => $this->resolveValue($number, $type),
-                'type' => $type,
+                'value' => $type->getValue($number),
+                'type' => $type->value,
             ];
         }
 
@@ -54,21 +50,13 @@ final class PattatrasService
      * Retourne le type du mot associé au nombre saisi
      * Le multiple de 15 est prioritaire car il est aussi multiple de 3 et de 5.
      */
-    private function resolveType(int $number): string
+    private function resolveType(int $number): ResultType
     {
         return match (true) {
-            $number % 15 === 0 => 'pattatras',
-            $number % 3 === 0 => 'patte',
-            $number % 5 === 0 => 'tatras',
-            default => 'number',
+            $number % 15 === 0 => ResultType::Pattatras,
+            $number % 3 === 0 => ResultType::Patte,
+            $number % 5 === 0 => ResultType::Tatras,
+            default => ResultType::Number,
         };
-    }
-
-    /**
-     * Associe le type à son mot ; si c'est un nombre on le conserve.
-     */
-    private function resolveValue(int $number, string $type): string
-    {
-        return self::WORDS[$type] ?? (string) $number;
     }
 }
